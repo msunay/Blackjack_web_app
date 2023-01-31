@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="style.css" rel="stylesheet">
+        <title>Blackjack</title>
+        <audio id="deal">
+            <source src="audio/card-deal.mp3" type="audio/ogg">
+        </audio>
+        <audio id='win'>
+            <source src="audio/tada-fanfare-a-6313.mp3" type="audio/ogg">
+        </audio>
+        <audio id="shuffle">
+            <source src="audio/card-shuffle.mp3">
+        </audio>
+    </head>
+    <body>
+        <header>
+            <h1>Blackjack</h1>
+            <button id="start" class="hover">Start Game (⏎)</button>
+        </header>
+        <section class="game">
+            <div class="dealer cards play-area">
+                <h2>Dealers Hand</h2>
+                <div id="dealer-hand">
+                    <ul class="hand">
+                        
+                    </ul>
+                    <div id="dealer-score" class="scores" class="scoreBorder"></div>
+                    <p id="dealer-blackjack" class="blackjack"></p>
+                </div>
+            </div>
+            
+            <div class="player cards play-area">
+                <h2>My Hand</h2>
+                <div id="player-hand">
+                    <ul class="hand">
+                        
+                    </ul>
+                    <div id="player-score" class="scores" class="scoreBorder"></div>
+                    <p id="player-blackjack" class="blackjack"></p>
+                </div>
+            </div>
+            <div class="action-button-container">
+                <button id="hit" class="action-buttons">HIT (<)</button>
+                <button id="stick" class="action-buttons">STICK (>)</button>
+            </div>
+        </section>
+        <div class="result">
+            <p id="result"></p>
+        </div>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js">
+        </script>
+        <script src="main.js">
+        </script>
+        
+    </body>
+</html>

@@ -1,0 +1,171 @@
+@font-face {
+    font-family: luminari;
+    src: url(fonts/luminari/Luminari-Regular.ttf)
+}
+
+html {    
+    background: url('images/BlackjackBackground-AdobeStock_325384191.jpeg') no-repeat center fixed;     
+    background-size: cover;
+}
+
+header {
+    text-align: center;
+    font-family: luminari, fantasy;
+    letter-spacing: 3px;
+    font-size: 30px;
+}
+
+#start {
+    position: absolute;
+    left: 5%;
+    top: 60px;
+}
+
+h2 {
+    text-align: center;
+    font-family: luminari;
+}
+
+.game {
+    text-align: center;
+}
+
+.spacer {
+    height: 30px;
+}
+
+ul {
+    list-style: none;
+    height: 80px;
+}
+
+li {
+    display: inline;
+    margin-right: 30px;
+    margin-bottom: 5px;
+}
+
+.cards .card {
+    display: inline-block;
+    width: 55px;
+    height: 85px;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: left;
+    font-size: 20px;
+    font-family: sans-serif;
+    position: relative;
+    background-color: white;
+    padding-left: 8px;
+    padding-top: 1px;
+    box-shadow: 7px 5px 20px black;
+}
+
+.card.hide {
+    background-color: black;
+}
+
+.scores {
+    height: 27px;
+    width: 25px;
+    margin-left: 30px;
+    position: relative;
+    margin-top: 15px;
+    box-sizing: border-box;
+    color: white;
+    font-family: luminari;
+    font-size: 35px;
+}
+
+.play-area {
+    margin: auto;
+    margin-bottom: 15px;
+    border: 1px solid white;
+    border-radius: 1%;
+    max-width: 45%;
+    height: 270px;
+    min-width: 20%;
+}
+
+.blackjack {
+    color: white;
+    height: 5px;
+    position: relative;
+    top: 0px;
+    animation-name: breathe;
+    animation-duration: .7s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes breathe {
+    from {
+        font-size: medium;
+    }
+
+    50% {
+        font-size: x-large;
+    }
+
+    to {
+        font-size: medium;
+    }
+}
+
+.result {
+    position: absolute;
+    display: flex;
+    background-color: antiquewhite;
+    opacity: 0%;
+    color: black;
+    top: 20%;
+    left: 5%;
+    font-size: 20px;
+    border: 1px solid black;
+    border-radius: 1%;
+    width: 135px;
+    height: 117px;
+    line-height: 40px;
+    font-family: luminari;
+    align-items: center;
+}
+
+#result {
+    box-sizing: content-box;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20%;
+    margin-bottom: 10px;
+}
+
+.action-buttons {
+    position: relative;
+    margin-bottom: 5px;   
+}
+
+button {
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    cursor: pointer;
+    width: 135px;
+}
+
+.action-button-container {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    display: grid;
+}
+
+button.hover:hover {
+    background-color: black;
+    color: white;
+}
+
+.greyed-out {
+    filter: brightness(40%);
+}
