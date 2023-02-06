@@ -61,7 +61,25 @@ dealCard = currentTurnPlayer => {
     return card;
 }
 
-function startGame() {
+reset = () => {
+    
+    // Reset
+    $('li').remove();
+    playerHand = [];
+    dealerHand = [];
+    $('.result').text('').css('opacity', '0');
+    $('.scores').text('');
+    $('.blackjack').text('');
+    $('.game').removeClass('greyed-out');
+    $('#start').prop('disabled', true);
+    $('#start').removeClass('hover');
+
+    return;
+}
+
+
+startGame = () => {
+    
         
     // Deal 2 cards to player and dealer with delay
     setTimeout(() => { 
@@ -87,12 +105,120 @@ function startGame() {
         $('<li>').html(card).addClass('card').appendTo($('#dealer-hand .hand'));
         $('audio#deal')[0].play();
     }, (time * 4));
+
+    return;
+} 
+
+calculateScores = () => {
+
+    // Calculate scores
+    setTimeout(() => { 
+        let playerScore = calcHandScore(playerHand);
+        // Don't count flipped dealers card
+        let dealerScore = calcHandScore([dealerHand[1]]);
+    
+        // Show player score
+        $('#player-score').text(playerScore);
+        $('#dealer-score').text(dealerScore);
+
+        // Enable buttons
+        $('.action-buttons').prop('disabled', false);
+        $('.action-buttons').addClass('hover');
+
+        if (playerScore === 21) {
+            $('#player-blackjack').text('Blackjack!!');
+            $stick.trigger('click');
+        }
+    }, time * 4.5);
     
     return;
 } 
 
+dealToDealer = () => {
 
-// Main
+    // Deal
+    let deal = setInterval(() => { 
+                
+        $('audio#deal')[0].play();
+        let card = dealCard(dealerHand);
+        $('<li>').html(card).addClass('card').appendTo($('#dealer-hand .hand'));
+        
+        dealerScore = calcHandScore(dealerHand);
+        $('#dealer-score').text(dealerScore);
+        
+        // When dealer stops hitting stop dealing and calc
+        if (dealerScore >= 17) {
+
+            // Stop interval
+            clearInterval(deal);
+            
+            calcWinner();
+
+        }
+    }, time);
+
+    return;
+}
+
+calcWinner = () => {
+    
+    // Highest score wins
+    setTimeout(() => {
+
+        // Blackjacks
+        if ($('#dealer-blackjack').text() === 'Dealer Blackjack!!' && $('#player-blackjack').text() !== 'Blackjack!!') {
+
+            $('.result').text('Dealer Blackjack!! You Lose!!').css('opacity', '50');
+            $('.game').addClass('greyed-out');
+
+        } else if ($('#player-blackjack').text() === 'Blackjack!!') {
+
+            $('.result').text('Blackjack!! You Win!!').css('opacity', '50');
+            $('.game').addClass('greyed-out');
+            $('audio#win')[0].play();
+
+        // Dealer bust
+        } else if (dealerScore > 21) {
+            
+            $('.result').text('Dealer Bust!! You Win!!').css('opacity', '50');
+            $('.game').addClass('greyed-out');
+            $('audio#win')[0].play();
+
+        // Dealer win
+        } else if (dealerScore > playerScore) {
+
+            $('.result').text('Dealer Wins!!').css('opacity', '50');
+            $('.game').addClass('greyed-out');
+
+        // Draw
+        } else if (dealerScore === playerScore) {
+            
+            $('.result').text('Draw!!').css('opacity', '50');
+            $('.game').addClass('greyed-out');
+
+        // Player win
+        } else {
+
+            $('.result').text('You Win!!').css('opacity', '50');
+            $('.game').addClass('greyed-out');
+            $('audio#win')[0].play();
+        }
+
+        // Enable start button
+        setTimeout(() => {
+            $('#start').prop('disabled', false);
+            $('#start').addClass('hover');
+        }, (time * 2));
+    }, (time * 2));
+
+    return;
+}
+
+
+
+
+
+// Main //
 
 // Starting animation
 $('.game').hide();
@@ -149,43 +275,9 @@ let playerHand = [];
 let dealerHand = [];
 
 // Start Game
-$startButton.on('click', () => {
-                
-                // Reset
-                $('li').remove();
-                playerHand = [];
-                dealerHand = [];
-                $('.result').text('').css('opacity', '0');
-                $('.scores').text('');
-                $('.blackjack').text('');
-                $('.game').removeClass('greyed-out');
-                $('#start').prop('disabled', true);
-                $('#start').removeClass('hover');
-            })
+$startButton.on('click', reset)
             .on('click', startGame)
-            .on('click', () => {
-
-                // Calculate scores
-                setTimeout(() => { 
-                    let playerScore = calcHandScore(playerHand);
-                    // Don't count flipped dealers card
-                    let dealerScore = calcHandScore([dealerHand[1]]);
-                
-                    // Show player score
-                    $('#player-score').text(playerScore);
-                    $('#dealer-score').text(dealerScore);
-
-                    // Enable buttons
-                    $('.action-buttons').prop('disabled', false);
-                    $('.action-buttons').addClass('hover');
-
-                    if (playerScore === 21) {
-                        $('#player-blackjack').text('Blackjack!!');
-                        $stick.trigger('click');
-                    }
-                }, time * 4.5);
-            });
-
+            .on('click', calculateScores);
 
 // If player hits deal next card in deck
 let $hit = $('#hit');
@@ -223,7 +315,6 @@ $hit.on('click', () => {
                     $('#start').addClass('hover');
                 }, (time * 2));
             }, time)
-            
         }
     }, time);
 })
@@ -247,105 +338,13 @@ $stick.on('click', () => {
     }
     // If dealers hand is under 17 deal another card
     if (dealerScore < 17) {
-        let dealToDealer = setInterval(() => { 
-            
-            $('audio#deal')[0].play();
-            let card = dealCard(dealerHand);
-            $('<li>').html(card).addClass('card').appendTo($('#dealer-hand .hand'));
-            
-            dealerScore = calcHandScore(dealerHand);
-            $('#dealer-score').text(dealerScore);
-            
-            // When dealer stops hitting stop dealing and calc
-            if (dealerScore >= 17) {
-
-                // Stop interval
-                clearInterval(dealToDealer);
-                
-                // Highest score wins
-                setTimeout(() => {
-
-                    // Blackjacks
-                    if ($('#player-blackjack').text() === 'Blackjack!!') {
-
-                        $('.result').text('Blackjack!! You Win!!').css('opacity', '50');
-                        $('.game').addClass('greyed-out');
-                        $('audio#win')[0].play();
-
-                    // Dealer bust
-                    } else if (dealerScore > 21) {
-                        
-                        $('.result').text('Dealer Bust!! You Win!!').css('opacity', '50');
-                        $('.game').addClass('greyed-out');
-                        $('audio#win')[0].play();
-
-                    // Dealer win
-                    } else if (dealerScore > playerScore) {
-
-                        $('.result').text('Dealer Wins!!').css('opacity', '50');
-                        $('.game').addClass('greyed-out');
-
-                    // Draw
-                    } else if (dealerScore === playerScore) {
-                        
-                        $('.result').text('Draw!!').css('opacity', '50');
-                        $('.game').addClass('greyed-out');
-
-                    // Player win
-                    } else {
-
-                        $('.result').text('You Win!!').css('opacity', '50');
-                        $('.game').addClass('greyed-out');
-                        $('audio#win')[0].play();
-                    }
-
-                    // Enable start button
-                    setTimeout(() => {
-                        $('#start').prop('disabled', false);
-                        $('#start').addClass('hover');
-                    }, (time * 2));
-                }, (time * 2));
-            }
-        }, time);
-    } else {
-        // Highest score wins
-        setTimeout(() => {
-
-            // Deactivate buttons
-            $('.action-buttons').prop('disabled', true);
-            $('.action-buttons').removeClass('hover');
-
-            // Blackjacks
-            if ($('#dealer-blackjack').text() === 'Dealer Blackjack!!' && $('#player-blackjack').text() !== 'Blackjack!!') {
-
-                $('.result').text('Dealer Blackjack!! You Lose!!').css('opacity', '50');
-                $('.game').addClass('greyed-out');
-
-            // Dealer win
-            } else if (dealerScore > playerScore) {
-
-                $('.result').text('Dealer Wins!!').css('opacity', '50');
-                $('.game').addClass('greyed-out');
-
-            // Draw
-            } else if (dealerScore === playerScore) {
-                
-                $('.result').text('Draw!!').css('opacity', '50');
-                $('.game').addClass('greyed-out');
-
-            // Player win
-            } else {
+       
+        // Deal to dealer and calc result
+        dealToDealer();
     
-                $('.result').text('You Win!!').css('opacity', '50');
-                $('.game').addClass('greyed-out');
-                $('audio#win')[0].play();
-            }
-
-            // Enable start button
-            setTimeout(() => {
-                $('#start').prop('disabled', false);
-                $('#start').addClass('hover');
-            }, (time * 2));
-        }, (time * 2));
+    } else {
+        
+        // Calc result
+        calcWinner();
     }
 });
