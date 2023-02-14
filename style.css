@@ -169,3 +169,14 @@ button.hover:hover {
 .greyed-out {
     filter: brightness(40%);
 }
+
+.shoe-display {
+    position: absolute;
+    top: 45%;
+    right: 16%;
+}
+#shoe-count {
+    display: inline;
+    
+    color: white;
+}

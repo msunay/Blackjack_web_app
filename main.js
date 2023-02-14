@@ -2,6 +2,7 @@
 calcHandScore = hand => {
 
     let handScore = 0;
+    let aces = 0;
     for (let i = 0; i < hand.length; i++) {
         
         // Check hand for face cards, add value
@@ -10,13 +11,21 @@ calcHandScore = hand => {
         
         // Check hand for Ace, add appropriate value
         } else if (/A/.test(hand[i][0])) { 
-            handScore < 11 ? handScore += 11 : handScore += 1;
+            handScore += 11;
+            aces++;
         
         // Else add card value
         } else {
             handScore += parseInt(hand[i][0]);
         }
     }
+
+    for (let i = 0; i < aces; i++) {
+        if (handScore > 21) {
+            handScore -= 10;
+        }
+    }
+
     return handScore;
 }
 
@@ -58,6 +67,9 @@ dealCard = currentTurnPlayer => {
     // Push card to hand array for score calcs
     currentTurnPlayer.push(card);
     
+    // Display shoe count
+    $('#shoe-count').text(deck.length);
+    
     return card;
 }
 
@@ -74,13 +86,18 @@ reset = () => {
     $('#start').prop('disabled', true);
     $('#start').removeClass('hover');
 
+    // Generate queue of randomly shuffled cards with 1 decks
+    deck = shuffleDecks(1);
+
     return;
 }
 
 
 startGame = () => {
     
-        
+    // Display shoe count
+    $('#shoe-count').text(deck.length);
+
     // Deal 2 cards to player and dealer with delay
     setTimeout(() => { 
         let card = dealCard(playerHand);
@@ -146,14 +163,11 @@ dealToDealer = () => {
         dealerScore = calcHandScore(dealerHand);
         $('#dealer-score').text(dealerScore);
         
-        // When dealer stops hitting stop dealing and calc
+        // When dealer reaches limit stop dealing and calcwinner
         if (dealerScore >= 17) {
 
             // Stop interval
             clearInterval(deal);
-            
-            calcWinner();
-
         }
     }, time);
 
@@ -243,9 +257,9 @@ setTimeout(() => {
     window.addEventListener("keydown", function (event) {
         if ($('#start').is(':enabled') && event.key === 'Enter') {
             $('#start').trigger('click');
-        } else if ($('.action-buttons').is(':enabled') && event.key === ',') {
-            $hit.trigger('click');
         } else if ($('.action-buttons').is(':enabled') && event.key === '.') {
+            $hit.trigger('click');
+        } else if ($('.action-buttons').is(':enabled') && event.key === ',') {
             $stick.trigger('click')
         }
     });
@@ -267,8 +281,8 @@ let $startButton = $('#start');
 // Disable buttons
 $('.action-buttons').prop('disabled', true);
 
-// Generate queue of randomly shuffled cards with 2 decks
-let deck = shuffleDecks(2);
+// Empty deck
+let deck = [];
 
 // Create hands
 let playerHand = [];
@@ -305,15 +319,19 @@ $hit.on('click', () => {
                 dealerScore = calcHandScore(dealerHand);
                 $('#dealer-score').text(dealerScore);
                 
+                
                 // Player loses
                 $('.result').text('Bust!! You Lose!!').css('opacity', '50');
                 $('.game').addClass('greyed-out');
 
+                // Dealer
+                dealToDealer();
+
                 // Enable start button
-                setTimeout(() => {
-                    $('#start').prop('disabled', false);
-                    $('#start').addClass('hover');
-                }, (time * 2));
+                // setTimeout(() => {
+                //     $('#start').prop('disabled', false);
+                //     $('#start').addClass('hover');
+                // }, (time * 2));
             }, time)
         }
     }, time);
@@ -341,7 +359,8 @@ $stick.on('click', () => {
        
         // Deal to dealer and calc result
         dealToDealer();
-    
+        calcWinner();
+
     } else {
         
         // Calc result
